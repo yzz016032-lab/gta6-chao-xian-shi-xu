@@ -1,0 +1,15 @@
+{
+  "name": "GTA6 · 潮线失序",
+  "short_name": "GTA6",
+  "lang": "zh-CN",
+  "start_url": "../../",
+  "scope": "../../",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0c1520",
+  "theme_color": "#0c1520",
+  "icons": [
+    { "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/app-icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

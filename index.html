@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <base href="./releases/gta6-ad4bcfed0a/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1520">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="GTA6 · 潮线失序是一款原创 3D 网页游戏。在白汐港开车、逛夜市、跑订单和探索外海。">
+  <!-- CC0 surface textures from Poly Haven: https://polyhaven.com/a/asphalt_01
+  https://polyhaven.com/a/concrete_pavement_02 https://polyhaven.com/a/painted_plaster_wall
+  https://polyhaven.com/a/worn_corrugated_iron https://polyhaven.com/license
+  CC0 sunset sky strip by Greg Zaal from https://polyhaven.com/a/the_sky_is_on_fire -->
+  <title>GTA6</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app-icon-192.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23101722'/%3E%3Cpath d='M6 32h12l18-16h6M6 40h16l18-16h2M6 24h8l18-16h10' fill='none' stroke='%23ffe69b' stroke-width='3'/%3E%3C/svg%3E">
+  <script>
+    // The chooser is interactive while the deferred game scripts download.
+    (() => {
+      function rememberChoice(event) {
+        const choice = event.target.closest?.('#language-screen [data-language]');
+        if (!choice) return;
+        const screen = choice.closest('#language-screen');
+        if (screen.hidden) return;
+        screen.dataset.pendingLanguage = choice.dataset.language;
+        screen.setAttribute('aria-busy', 'true');
+        for (const option of screen.querySelectorAll('[data-language]')) {
+          option.setAttribute('aria-current', String(option === choice));
+        }
+      }
+      document.addEventListener('click', rememberChoice);
+      document.addEventListener('DOMContentLoaded', () => {
+        document.removeEventListener('click', rememberChoice);
+      }, { once: true });
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css?v=23">
+  <link rel="stylesheet" href="interface.css?v=3">
+  <script defer src="three.min.js"></script>
+  <script defer src="world.js?v=19"></script>
+  <script defer src="district-architecture.js?v=14"></script>
+  <script defer src="warehouse.js?v=6"></script>
+  <script defer src="coast.js?v=6"></script>
+  <script defer src="port-detail.js?v=6"></script>
+  <script defer src="story-landmarks.js?v=7"></script>
+  <script defer src="night-market.js?v=13"></script>
+  <script defer src="boulevard-art.js?v=18"></script>
+  <script defer src="promenade-art.js?v=13"></script>
+  <script defer src="vehicles.js?v=19"></script>
+  <script defer src="concept-car.js?v=3"></script>
+  <script defer src="boat-art.js?v=6"></script>
+  <script defer src="marine.js?v=15"></script>
+  <script defer src="look.js?v=16"></script>
+  <script defer src="street-render.js?v=17"></script>
+  <script defer src="stealth.js?v=5"></script>
+  <script defer src="navigation.js?v=16"></script>
+  <script defer src="english.js?v=2"></script>
+  <script defer src="language.js?v=1"></script>
+  <script defer src="sim.js?v=22"></script>
+  <script defer src="touch.js?v=20"></script>
+  <script defer src="game.js?v=23"></script>
+</head>
+<body>
+  <main id="game" aria-label="GTA6">
+    <canvas id="scene" aria-label="白汐港三维场景"></canvas>
+    <div id="vignette" aria-hidden="true"></div>
+    <div id="graphics-recovery" class="graphics-recovery" hidden>
+      <p id="graphics-message" role="status"></p>
+      <button id="graphics-retry" class="quiet" type="button" hidden>重试画面</button>
+      <button id="graphics-title" class="quiet" type="button">返回标题</button>
+    </div>
+
+    <section id="language-screen" class="title-screen language-screen" aria-labelledby="language-title" translate="no">
+      <div class="cover" aria-hidden="true"></div>
+      <div class="language-frame">
+        <div class="language-brand" lang="en">GTA<span>6</span></div>
+        <div class="language-panel">
+          <h1 id="language-title">
+            <span lang="zh-CN">选择语言</span>
+            <span lang="en">Select language</span>
+          </h1>
+          <div class="language-choices">
+            <button class="language-choice" type="button" lang="zh-CN" data-language="zh-CN">中文</button>
+            <button class="language-choice" type="button" lang="en" data-language="en">English</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="title-screen" class="title-screen" aria-labelledby="game-title" hidden>
+      <div class="cover" aria-hidden="true"></div>
+      <div class="title-inner">
+        <div class="title-top">
+          <div class="wordmark"><span class="signal" aria-hidden="true"><i></i><i></i><i></i></span><span>白汐港 <span class="wordmark-sub" lang="en">BAIXI HARBOR</span></span></div>
+          <div class="title-options"><button id="title-language" class="quiet" type="button">语言</button><button id="title-audio" class="quiet sound-toggle" aria-pressed="true">声音开启</button><button class="quiet title-help" data-open="help">操作说明</button></div>
+        </div>
+        <div class="title-content">
+          <h1 id="game-title" lang="en">GTA<span>6</span></h1>
+          <p class="title-subtitle">潮线失序</p>
+          <div class="title-actions">
+            <div class="story-option">
+              <button id="start" class="action primary" aria-describedby="story-mode"><span id="start-label">开始游戏</span></button>
+              <span id="story-mode">主线剧情</span>
+            </div>
+            <div id="campaign-resume" class="campaign-resume" hidden><span id="campaign-resume-label" class="mono"></span><strong id="campaign-resume-name"></strong></div>
+            <div class="title-modes">
+              <button id="roam" class="mode-action"><i class="mode-mark roam-mark" aria-hidden="true"></i>自由漫游</button>
+              <button id="rain-job" class="mode-action"><i class="mode-mark rain-mark" aria-hidden="true"></i>雨夜行动</button>
+              <button id="harbor-job" class="mode-action"><i class="mode-mark harbor-mark" aria-hidden="true"></i>海湾接驳</button>
+            </div>
+          </div>
+          <p id="boot-status" class="boot-status" role="status" hidden></p>
+        </div>
+        <div class="title-bottom">
+          <div class="shortcuts"><span><kbd>↑</kbd><kbd>↓</kbd> 选择</span><span><kbd>Enter</kbd> 确认</span><span><kbd>Esc</kbd> 返回</span></div>
+          <div class="cover-caption"><span>灯塔湾</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hud" class="hud" data-touch-mode="walk" aria-label="游戏状态" hidden>
+      <div class="hud-leading">
+        <div class="hud-left">
+          <div class="district"><i class="location-mark" aria-hidden="true"></i><span id="district-name">灯塔湾</span><span id="city-time" class="mono">18:08</span><span id="city-weather" class="weather-status">雨后</span></div>
+          <div id="road-guide" class="road-guide" hidden><span id="road-guide-mark" aria-hidden="true"></span><strong id="road-guide-action"></strong><span id="road-guide-distance" class="mono"></span></div>
+          <div id="job-card" class="job-card">
+            <div id="job-kind" class="job-kind">当前目标</div>
+            <h2 id="job-title">夜班交接</h2>
+            <p id="job-task">到潮汛修车铺找林鹭。</p>
+            <div id="job-meta" class="job-meta mono"></div>
+            <div id="stealth-status" class="stealth-status" hidden><div><span id="stance">站立</span><span id="suspicion-label">警戒</span></div><div class="stealth-track" role="meter" aria-label="仓库守卫警戒" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="suspicion-meter"><i id="suspicion-fill"></i></div></div>
+          </div>
+        </div>
+        <div class="hud-bottom-left">
+          <button id="map-button" class="minimap" aria-label="打开城市地图" aria-keyshortcuts="M">
+            <canvas id="radar" width="320" height="200"></canvas><span id="radar-scale" class="chart-ruler" aria-hidden="true"></span><span class="north mono" aria-hidden="true">N</span><span class="map-key"><kbd>M</kbd> 地图</span>
+          </button>
+        </div>
+      </div>
+      <div class="hud-trailing">
+        <div class="hud-right">
+          <div class="balance"><strong id="cash" class="mono" aria-label="现金">¥120</strong><button id="pause-button" class="icon-btn" data-open="pause" aria-label="暂停游戏" aria-keyshortcuts="Escape"><span class="pause-mark" aria-hidden="true"></span></button></div>
+          <div id="heat-card" class="heat-card" hidden>
+            <div id="heat-stars" class="heat-stars" aria-label="通缉等级">★★★★</div>
+            <div id="heat-status">警车正在追踪</div>
+            <div class="heat-track"><i id="heat-fill"></i></div>
+          </div>
+        </div>
+        <div id="driving" class="hud-bottom-right" hidden>
+          <div class="car-name"><span id="car-model">海风 GT</span><span id="gear" class="mono">D</span></div>
+          <div class="speed"><strong id="speed" class="mono">000</strong><span id="speed-unit" class="mono">KM/H</span></div>
+          <div class="speed-track" aria-hidden="true"><i id="speed-fill"></i></div>
+          <div class="meter" role="meter" aria-label="氮气余量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="nitro-meter"><span id="nitro-fill"></span></div>
+          <div class="car-meta"><span id="station">R 电台关闭</span><span id="vehicle-help">SHIFT 氮气</span></div>
+        </div>
+      </div>
+      <div id="world-label" class="world-label" hidden><b></b><span></span></div>
+      <div class="hud-notices">
+        <div id="look-hint" class="look-hint" hidden>
+          <div role="status"><span id="look-hint-method"></span><strong id="look-hint-value"></strong></div>
+          <button id="look-hint-adjust" type="button"><span>调整</span><kbd>F2</kbd></button>
+          <button id="look-hint-dismiss" type="button" aria-label="关闭视角提示">×</button>
+        </div>
+        <div id="toast" class="toast" role="status" hidden><span id="toast-kind"></span><strong id="toast-title"></strong><small id="toast-body"></small></div>
+        <div id="interaction" class="interaction" hidden><kbd>E</kbd><span></span></div>
+        <div id="radio-message" class="radio-message" role="status" aria-atomic="true" hidden><span class="radio-portrait" aria-hidden="true"></span><div><span id="radio-person"></span><p id="radio-line"></p></div></div>
+      </div>
+      <div class="desktop-controls" aria-label="操作提示">
+        <span><svg viewBox="0 0 16 20" fill="none" aria-hidden="true"><rect x="2.5" y="1.5" width="11" height="17" rx="5.5"/><path d="M8 3v5"/></svg>鼠标环视</span>
+        <span><kbd>C</kbd>机位</span><span class="desktop-interact"><kbd>E</kbd>交互</span>
+      </div>
+      <div id="touch" class="touch" role="group" aria-label="触屏控制" data-mode="walk" hidden>
+        <button type="button" id="touch-camera" data-touch-action="KeyC" aria-label="切换视角"><svg viewBox="0 0 28 24" aria-hidden="true"><path d="M3.5 7.5h5l2-3h6l2 3h6v13h-22z"/><circle cx="14" cy="13.5" r="3.7"/><path d="M19.5 10h2"/></svg></button>
+        <div id="touch-move" class="touch-move" role="group" aria-label="移动摇杆，按住方向行走">
+          <div id="touch-stick" class="touch-stick" aria-hidden="true">
+            <span class="touch-stick-ticks"></span><span class="touch-stick-knob"></span><span id="touch-stick-label">移动</span>
+          </div>
+        </div>
+        <div id="touch-steering" class="touch-steering" role="group" aria-label="方向键" data-touch-group data-touch-slide hidden>
+          <button type="button" id="touch-left" data-touch-hold="left" aria-label="向左转"><svg viewBox="0 0 80 64" preserveAspectRatio="none" aria-hidden="true"><path class="paddle-shell" d="M71 4H42C22 4 8 17 5 37l-2 9c-1 7 3 12 10 12h47c7 0 11-4 12-11l5-35c1-5-1-8-6-8Z"/><path class="paddle-rim" d="M9 32C14 17 25 9 41 8h16"/><path class="paddle-arrow" d="m29 31 12-10 3 3-8 7h16v4H36l8 7-3 3-12-10z"/><path class="paddle-grip" d="m21 51 4-4m3 4 4-4m3 4 4-4"/></svg></button>
+          <button type="button" id="touch-right" data-touch-hold="right" aria-label="向右转"><svg viewBox="0 0 80 64" preserveAspectRatio="none" aria-hidden="true"><g transform="translate(80 0) scale(-1 1)"><path class="paddle-shell" d="M71 4H42C22 4 8 17 5 37l-2 9c-1 7 3 12 10 12h47c7 0 11-4 12-11l5-35c1-5-1-8-6-8Z"/><path class="paddle-rim" d="M9 32C14 17 25 9 41 8h16"/><path class="paddle-arrow" d="m29 31 12-10 3 3-8 7h16v4H36l8 7-3 3-12-10z"/><path class="paddle-grip" d="m21 51 4-4m3 4 4-4m3 4 4-4"/></g></svg></button>
+        </div>
+        <div class="touch-actions">
+          <div class="touch-tools" data-touch-group>
+            <button type="button" id="touch-crouch" data-touch-action="KeyQ" aria-label="切换蹲行" aria-pressed="false"><svg viewBox="0 0 28 24" aria-hidden="true"><circle cx="18.2" cy="4.8" r="2.3"/><path d="m15.6 8-4.3 4.6 7 3-5.8 5.2H8m5.8-11 4.1 2.3h4.4m-11.2 1.3-1.5 3.2 4.8 1.7m4.9 2.5h4.3"/></svg><span data-touch-label>蹲行</span></button>
+            <button type="button" id="touch-boost" data-touch-hold="ShiftLeft" aria-label="氮气加速" hidden><svg viewBox="0 0 28 24" aria-hidden="true"><g transform="rotate(27 14 12)"><path d="M11 2.5h6m-3 0V6m-4 4.5c0-2.4 1.6-4 4-4s4 1.6 4 4V20c0 1-.8 1.5-1.6 1.5h-4.8c-.8 0-1.6-.5-1.6-1.5z"/><path d="M10.5 11h7m-7 6.5h7"/></g><path d="m5.5 7 3-2m-5.5 7 3.5-2"/></svg><span data-touch-label>氮气</span></button>
+            <button type="button" id="touch-brake" data-touch-hold="Space" hidden><svg viewBox="0 0 28 24" aria-hidden="true"><g class="road-mark"><path d="m6.5 17 11.3-11.3a2.2 2.2 0 0 1 3.1 3.1L10 19.5m-7 1h21"/><circle cx="7.8" cy="17.8" r="2.2"/><path d="m16 8 3 3"/></g><g class="marine-mark"><path d="M10 3v9m7-9v9M2 17q3.1 3 6 0 3 3 6 0 3 3 6 0 3.1 3 6 0m-22 4q2.1 1.8 4 0m12 0q2.2 1.8 4 0"/></g></svg><span data-touch-label>手刹</span></button>
+            <button type="button" id="touch-enter" class="touch-enter" data-touch-action="KeyE" hidden><svg viewBox="0 0 28 24" aria-hidden="true"><path d="M14 3.5h8v17h-8m-9-8.5h11m-4-4 4 4-4 4"/></svg><span data-touch-label>交互</span></button>
+          </div>
+          <div id="touch-pedals" class="touch-pedals" role="group" aria-label="油门与刹车" data-touch-group data-touch-slide hidden>
+            <button type="button" id="touch-reverse" data-touch-hold="KeyS" aria-label="刹车或倒车"><svg class="pedal-shell" viewBox="0 0 82 60" preserveAspectRatio="none" aria-hidden="true"><path class="plate" d="m8 12 64-3c4 0 6 2 7 6l1 33c0 5-3 8-8 8H10c-5 0-8-3-8-7V21c0-5 2-8 6-9z"/><path class="edge" d="m8 17 39-2M8 48v2h11"/></svg><svg class="pedal-glyph" viewBox="0 0 40 30" aria-hidden="true"><g class="road-mark"><path d="m5 8 27-2 3 12-28 2z"/><path d="m10 11 1.4 4.5m4-5 1.4 4.5m4-5 1.4 4.5m4-5 1.4 4.5m-8.5 5.5 2 5h6"/></g><g class="marine-mark"><path d="M20 5v14m-5-5 5 5 5-5m-18 9q3.2 3 6.5 0 3.2 3 6.5 0 3.2 3 6.5 0 3.2 3 6.5 0"/></g></svg><span id="touch-reverse-label" data-touch-label>刹车</span><small id="touch-reverse-hint">倒车</small></button>
+            <button type="button" id="touch-gas" data-touch-hold="KeyW"><svg class="pedal-shell" viewBox="0 0 72 68" preserveAspectRatio="none" aria-hidden="true"><path class="plate" d="M22 3h39c5 0 8 3 8 8v47c0 5-3 8-8 8H9c-5 0-8-4-6-9L15 10c1-5 3-7 7-7z"/><path class="edge" d="M21 10h23M9 54l2-8"/></svg><svg class="pedal-glyph" viewBox="0 0 28 34" aria-hidden="true"><g class="road-mark"><path d="M11.5 3.5h10l-3 24a3 3 0 0 1-3 2.5h-8a2 2 0 0 1-2-2.5l3-21a3 3 0 0 1 3-3z"/><path d="m12.5 9-2 15m6.7-15-2.1 15"/></g><g class="marine-mark"><path d="m8 11 6-6 6 6m-12 7 6-6 6 6m-18 8q3 3 6 0 3 3 6 0 3 3 6 0 3 3 6 0"/></g></svg><span data-touch-label>油门</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dispatch-panel" class="overlay dispatch-overlay" role="dialog" aria-modal="true" aria-labelledby="dispatch-title" aria-describedby="dispatch-copy" hidden>
+      <div class="dispatch-folio">
+        <figure class="dispatch-speaker">
+          <div class="dispatch-portrait" aria-hidden="true"></div>
+          <figcaption>林鹭</figcaption>
+        </figure>
+        <div class="dispatch-script">
+          <header><p id="dispatch-chapter" class="dispatch-chapter"></p><h2 id="dispatch-title"></h2></header>
+          <p id="dispatch-copy" class="dispatch-copy" tabindex="0"></p>
+          <div class="dispatch-actions">
+            <button id="dispatch-accept" type="button">接受任务</button>
+            <button id="dispatch-later" type="button" data-close>稍后</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="map-panel" class="overlay map-overlay" role="dialog" aria-modal="true" aria-label="城市地图" hidden>
+      <div class="map-shell">
+        <div class="panel-head"><h2>城市地图</h2><button class="quiet close-panel" data-close><kbd>ESC</kbd> 关闭</button></div>
+        <div class="map-content">
+          <div class="map-chart">
+            <div class="map-plot"><canvas id="big-map" width="900" height="760" aria-label="白汐港地图与任务标记"></canvas><div class="map-compass mono" aria-hidden="true">N<span></span></div></div>
+            <div class="map-legend"><span><i class="legend-player"></i>当前位置</span><span><i class="legend-route"></i>导航路线</span><span><i class="legend-contract" aria-hidden="true">1</i>差事</span><span><i class="legend-tape"></i>已收集磁带</span><span><i class="legend-shop"></i>涂装与调校</span><span id="atlas-scale" class="chart-ruler" aria-hidden="true"></span></div>
+          </div>
+          <aside class="map-sidebar">
+            <div class="map-heading"><h3 id="map-heading">差事</h3><span id="map-progress" class="mono" hidden></span></div>
+            <div class="map-records">
+              <div id="map-brief" class="map-brief" hidden><strong></strong><p></p></div>
+              <div id="map-jobs" class="map-jobs"></div>
+            </div>
+            <button type="button" id="map-market" class="map-market"><strong>白汐夜市</strong><span></span></button>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="pause-panel" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden>
+      <div class="sheet pause-sheet">
+        <div class="panel-head"><h2 id="pause-title">已暂停</h2><button id="fullscreen-button" class="quiet" type="button" hidden>全屏</button></div>
+        <div class="pause-body">
+          <div class="pause-actions">
+            <button class="action primary" data-close>继续游戏</button>
+            <button class="action secondary" data-open="help">查看操作</button>
+            <button id="reset-position" class="action secondary">返回车库</button>
+            <button id="back-to-title" class="action secondary">返回标题</button>
+            <button id="retry-job" class="action secondary" hidden>从本章起点重试</button>
+            <button type="button" id="cancel-order" class="action secondary cancel-order" hidden>取消夜市订单</button>
+          </div>
+          <div class="pause-settings">
+            <h3 class="settings-heading">游戏设置</h3>
+            <label class="setting-row"><span>语言</span><select id="language-setting" class="quiet"><option value="zh-CN" lang="zh-CN" data-language-name>中文</option><option value="en" lang="en" data-language-name>English</option></select></label>
+            <label class="setting-row"><span>画质</span><select id="graphics-setting" class="quiet"><option value="auto">自动</option><option value="high">高</option><option value="performance">性能</option></select></label>
+            <label class="setting-row"><span>触屏操作</span><select id="touch-setting" class="quiet"><option value="auto">自动识别</option><option value="on">开启</option><option value="off" data-en="Off">关闭</option></select></label>
+            <div class="setting-row look-setting-row"><label for="look-setting">视角灵敏度</label><select id="look-setting" class="quiet"><option value="low">低</option><option value="normal">标准</option><option value="high">高</option><option value="custom" hidden>自定义</option></select><button id="look-open" class="quiet" type="button">微调</button></div>
+            <div class="sheet-footer"><button id="pause-audio" class="quiet sound-toggle" aria-pressed="true">声音开启</button><button id="motion-button" class="quiet" aria-pressed="false">镜头震动开启</button></div>
+            <div class="pause-tools" role="group" aria-label="快捷切换"><button class="quiet" aria-label="切换视角" data-action="KeyC">视角</button><button class="quiet" aria-label="切换昼夜" data-action="KeyN">昼夜</button><button class="quiet" aria-label="切换电台" data-action="KeyR">电台</button><button class="quiet" aria-label="切换天气" data-action="KeyX">天气</button></div>
+          </div>
+        </div>
+        <div id="look-controls" class="look-controls" hidden>
+          <label class="look-device" for="look-input-device"><span>输入设备</span><select class="quiet" id="look-input-device"><option value="mouse">鼠标</option><option value="touch">触屏</option></select></label>
+          <div class="look-adjustment">
+            <label for="look-gain">转向速度</label><output id="look-gain-value" for="look-gain">100%</output>
+            <div class="look-track-row"><span aria-hidden="true">30%</span><input id="look-gain" type="range" min="30" max="180" step="1" value="100"><span aria-hidden="true">180%</span></div>
+          </div>
+          <div class="look-settings-actions"><button id="look-test-resume" class="action primary" type="button">回到游戏</button><button id="look-settings-back" class="quiet" type="button">返回设置</button><button id="look-reset" class="quiet" type="button">恢复标准</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workshop-panel" class="overlay" role="dialog" aria-modal="true" aria-labelledby="workshop-title" hidden>
+      <div class="sheet workshop-sheet">
+        <div class="panel-head"><div><div class="eyebrow">海风 GT</div><h2 id="workshop-title">潮汛修车铺</h2></div><button class="quiet close-panel" data-close><kbd>ESC</kbd> 关闭</button></div>
+        <div class="workshop-preview" aria-hidden="true"><div class="workshop-car"></div></div>
+        <div class="workshop-wallet"><span>现金</span><strong id="workshop-cash" class="mono"></strong></div>
+        <h3>涂装</h3><div id="paint-choices" class="paint-choices"></div>
+        <div class="workshop-upgrade"><div><h3>动力调校</h3><p id="tune-level"></p></div><button id="tune-buy" class="quiet"></button></div>
+      </div>
+    </section>
+
+    <section id="help-panel" class="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+      <div class="sheet help-sheet"><div class="panel-head"><h2 id="help-title">操作说明</h2><button class="quiet close-panel" data-close><kbd>ESC</kbd> 关闭</button></div>
+        <div class="guide-body">
+          <dl class="key-guide">
+            <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></dt><dd>步行、驾驶与操船，也可用方向键。</dd></div>
+            <div><dt>鼠标</dt><dd>移动鼠标环顾四周，按 Esc 释放鼠标。</dd></div>
+            <div><dt><kbd>E</kbd><kbd>Q</kbd></dt><dd>交互、上下车船 / 蹲行</dd></div>
+            <div><dt><kbd>SHIFT</kbd><kbd>SPACE</kbd></dt><dd>奔跑或氮气加速 / 手刹或船艇制动</dd></div>
+            <div><dt><kbd>M</kbd><kbd>C</kbd></dt><dd>查看地图 / 切换机位</dd></div>
+            <div><dt><kbd>R</kbd><kbd>N</kbd><kbd>X</kbd></dt><dd>切换电台 / 昼夜 / 天气</dd></div>
+          </dl>
+          <dl class="touch-guide">
+            <div><dt>移动</dt><dd>按住圆盘边缘朝该方向走，也可在左下空白处按住拖动。推到圈外奔跑，点「蹲行」放低姿势。</dd></div>
+            <div><dt>转动视角</dt><dd>滑动右半屏环视，点暂停旁的相机图标切换机位。视角灵敏度可在暂停菜单调整。</dd></div>
+            <div><dt>驾驶</dt><dd>左手转向，右手在油门与刹车间滑动。停稳后按住刹车倒车，按住氮气加速。</dd></div>
+            <div><dt>交互</dt><dd>靠近车辆、码头或任务地点时，点右侧出现的动作键。</dd></div>
+          </dl>
+          <p class="guide-tip">在地图里查看任务与路线。主线进度、现金和磁带会自动保存。</p>
+          <details class="model-credit"><summary>模型署名</summary><p>赤潮 RS 改编自 Car Concept。原型由 Unity Fan 设计，模型由 Eric Chadwick 制作，© 2024 Darmstadt Graphics Group GmbH。游戏版本重新减面、配色，并重新绑定车轮。</p><a href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept" target="_blank" rel="noopener">原始作品</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0 许可</a></details>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
